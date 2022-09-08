@@ -1,4 +1,4 @@
-import { reqCategoryList } from "../../api";
+import { reqCategoryList, reqGetBannerList, reqGetFlowerList } from "../../api";
 
 
 // home的小仓库
@@ -36,7 +36,8 @@ import { reqCategoryList } from "../../api";
 const homeAbout = {
     namespaced: true,
     state: {
-        categoryList: []
+        categoryList: [],
+        bannerList: []
     },
 
     actions: {
@@ -46,12 +47,22 @@ const homeAbout = {
             if (result.code == 200) {
                 commit("CATEGORYLIST", result.data);
             }
-        }
+        },
+        async getBannerList({ commit }) {
+            let result = await reqGetBannerList();
+            if (result.code == 200) {
+                commit("GETBANNERLIST", result.data);
+            }
+        },
+
     },
 
     mutations: {
         CATEGORYLIST(state, categoryList) {
             state.categoryList = categoryList.slice(0, 16)
+        },
+        GETBANNERLIST(state, bannerList) {
+            state.bannerList = bannerList
         }
     },
 

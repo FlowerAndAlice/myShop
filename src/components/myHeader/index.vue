@@ -68,7 +68,7 @@ export default {
       this.$router.replace({
         path: "/search",
         name: "search",
-        query: { Msg: this.searchMsg.toUpperCase() },
+        query: this.$route.query,
         params: { Msg: this.searchMsg || undefined },
       });
     },
