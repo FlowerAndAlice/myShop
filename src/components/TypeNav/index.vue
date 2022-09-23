@@ -125,11 +125,11 @@ export default {
         let query = { categoryName: categoryname };
         // 1/2/3级分类
         if (category1id) {
-          query.categoryid = category1id;
+          query.category1Id = category1id;
         } else if (category2id) {
-          query.categoryid = category2id;
+          query.category2Id = category2id;
         } else {
-          query.categoryid = category3id;
+          query.category3Id = category3id;
         }
         // 携带params参数,空对象也传
         location.params = this.$route.params;

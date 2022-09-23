@@ -1,4 +1,4 @@
-import { reqCategoryList, reqGetBannerList, reqGetFlowerList } from "../../api";
+import { reqCategoryList, reqGetBannerList, reqGetFloorList } from "../../api";
 
 
 // home的小仓库
@@ -37,7 +37,8 @@ const homeAbout = {
     namespaced: true,
     state: {
         categoryList: [],
-        bannerList: []
+        bannerList: [],
+        floorList: []
     },
 
     actions: {
@@ -54,6 +55,12 @@ const homeAbout = {
                 commit("GETBANNERLIST", result.data);
             }
         },
+        async GetFloorList({ commit }) {
+            let result = await reqGetFloorList();
+            if (result.code == 200) {
+                commit("GETFLOORLIST", result.data)
+            }
+        }
 
     },
 
@@ -63,6 +70,10 @@ const homeAbout = {
         },
         GETBANNERLIST(state, bannerList) {
             state.bannerList = bannerList
+        },
+        GETFLOORLIST(state, floorList) {
+            state.floorList = floorList
+                // console.log(floorList);
         }
     },
 

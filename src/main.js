@@ -8,8 +8,10 @@ import router from "@/router"
 import store from './store';
 // 注册TypeNav全局组件
 import TypeNav from "@/components/TypeNav";
-Vue.component(TypeNav.name, TypeNav)
+import Carousel from "@/components/Carousel"
 
+Vue.component(TypeNav.name, TypeNav)
+Vue.component(Carousel.name, Carousel)
 
 
 // 引入mockServer.js的数据

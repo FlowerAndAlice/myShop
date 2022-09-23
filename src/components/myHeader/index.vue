@@ -37,7 +37,7 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
-            v-model="searchMsg"
+            v-model="keyword"
           />
           <button
             class="sui-btn btn-xlarge btn-danger"
@@ -57,7 +57,7 @@ export default {
   name: "myHeader",
   data() {
     return {
-      searchMsg: "",
+      keyword: "",
     };
   },
   methods: {
@@ -69,7 +69,7 @@ export default {
         path: "/search",
         name: "search",
         query: this.$route.query,
-        params: { Msg: this.searchMsg || undefined },
+        params: { keyword: this.keyword || undefined },
       });
     },
   },

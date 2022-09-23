@@ -13,11 +13,20 @@ export const reqCategoryList = () =>
     })
 
 
-
+// 获取home首页轮播图banner
 export const reqGetBannerList = () =>
     // 发请求,返回的是promise对象
     mockRequests.get('/banner');
 
-export const reqGetFlowerList = () =>
+// 获取floor数据
+export const reqGetFloorList = () =>
     // 发请求,返回的是promise对象
-    mockRequests.get("/flower");
+    mockRequests.get("/floor");
+
+// 获取搜索模块的数据
+export const reqSearchInfo = (params) =>
+    requests({
+        url: "/list",
+        method: "post",
+        data: params,
+    })

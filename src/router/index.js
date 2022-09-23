@@ -43,11 +43,11 @@ export default new VueRouter({
         component: Home,
         meta: { showFooter: true }
     }, {
-        path: "/search/:Msg?",
+        path: "/search/:keyword?",
         name: "search",
         component: Search,
         meta: { showFooter: true },
-        props: ($route) => ({ bigMsg: $route.query.Msg, Msg: $route.params.Msg })
+        // props: ($route) => ({ keyword: $route.params.keyword })
     }, {
         path: "/login",
         component: Login
