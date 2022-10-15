@@ -3,8 +3,13 @@
     <div class="type-wrap logo">
       <div class="fl key brand">品牌</div>
       <div class="value logos">
+        <!-- 品牌的区域 -->
         <ul class="logo-list">
-          <li v-for="(trademark, index) in trademarkList" :key="trademark.tmId">
+          <li
+            v-for="(trademark, index) in trademarkList"
+            :key="trademark.tmId"
+            @click="getTrademark(trademark)"
+          >
             {{ trademark.tmName }}
           </li>
         </ul>
@@ -14,15 +19,22 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
+    <!-- 其他售卖属性的区域 -->
     <div
       class="type-wrap"
       v-for="(attr, index) in attrsList"
       :key="attr.attrId"
     >
+      <!-- 售卖属性 -->
       <div class="fl key">{{ attr.attrName }}</div>
+      <!-- 属性值 -->
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+          <li
+            v-for="(attrValue, index) in attr.attrValueList"
+            :key="index"
+            @click="attrInfo(attr, attrValue)"
+          >
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -37,6 +49,19 @@ import { mapGetters } from "vuex";
 export default {
   name: "SearchSelector",
   mounted() {},
+  methods: {
+    getTrademark(trademark) {
+      // 将trademark品牌数据传到父组件search
+      this.$emit("getTrademark", trademark);
+    },
+    attrInfo(...args) {
+      this.$emit("getAttrInfo", args);
+    },
+  },
+  beforeDestroy() {
+    this.$off("getTrademark");
+    this.$off("getAttrInfo");
+  },
   computed: {
     ...mapGetters("searchAbout", ["trademarkList", "attrsList"]),
   },

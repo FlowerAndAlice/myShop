@@ -134,7 +134,6 @@ export default {
         // 携带params参数,空对象也传
         location.params = this.$route.params;
         location.query = query;
-        console.log(location);
         this.$router.push(location);
       }
     },

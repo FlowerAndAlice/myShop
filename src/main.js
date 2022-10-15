@@ -6,12 +6,14 @@ import App from './App.vue'
 import router from "@/router"
 // 引入store
 import store from './store';
-// 注册TypeNav全局组件
+// 注册全局组件
 import TypeNav from "@/components/TypeNav";
 import Carousel from "@/components/Carousel"
+import Pagination from "@/components/Pagination"
 
 Vue.component(TypeNav.name, TypeNav)
 Vue.component(Carousel.name, Carousel)
+Vue.component(Pagination.name, Pagination)
 
 
 // 引入mockServer.js的数据
@@ -28,4 +30,7 @@ new Vue({
     router,
     // 注册store仓库,组件就有了$store属性
     store,
+    beforeCreate() {
+        Vue.prototype.$bus = this;
+    },
 }).$mount('#app')

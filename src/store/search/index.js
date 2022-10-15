@@ -33,6 +33,9 @@ const searchAbout = {
         trademarkList(state) {
             return state.searchList.trademarkList || []
         },
+        total(state) {
+            return state.searchList.total
+        }
 
     },
 }

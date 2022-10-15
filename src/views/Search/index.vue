@@ -11,38 +11,76 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>x</i></li>
-            <li class="with-x">华为<i>x</i></li>
-            <li class="with-x">OPPO<i>x</i></li>
+            <!-- 分类的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">
+              {{ searchParams.categoryName }}
+              <i @click="removeCategoryName">x</i>
+            </li>
+            <!-- 关键字的面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">
+              {{ searchParams.keyword }}
+              <i @click="removeKeyword">x</i>
+            </li>
+            <!-- 品牌名的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark.split(":")[1] }}
+              <i @click="removeTrademark">x</i>
+            </li>
+            <!-- 售卖属性的面包屑 -->
+            <li
+              class="with-x"
+              v-for="(attrValue, index) in searchParams.props"
+              :key="index"
+            >
+              {{ attrValue.split(":")[1] }}
+              <i @click="removeAttrInfo(index)">x</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector
+          @getTrademark="getTrademark"
+          @getAttrInfo="getAttrInfo"
+        />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
+              <!-- 排序, asc:升序,desc:降序 -->
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li
+                  :class="{ active: isActive1 }"
+                  @click.prevent="toggleOrder('1')"
+                >
+                  <a href="#"
+                    >综合
+                    <span
+                      v-show="isActive1"
+                      class="iconfont"
+                      :class="{
+                        'icon-arrowup': isAsc,
+                        'icon-arrowdown': !isAsc,
+                      }"
+                    ></span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li
+                  :class="{ active: !isActive1 }"
+                  @click.prevent="toggleOrder('2')"
+                >
+                  <a href="#"
+                    >价格
+                    <span
+                      v-show="!isActive1"
+                      class="iconfont"
+                      :class="{
+                        'icon-arrowup': isAsc,
+                        'icon-arrowdown': !isAsc,
+                      }"
+                    ></span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -57,9 +95,11 @@
               >
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"
+                    <router-link
+                      :to="{ name: 'detail', params: { skuid: good.id } }"
+                      target="_blank"
                       ><img :src="good.defaultImg"
-                    /></a>
+                    /></router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -93,35 +133,14 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 分页器 -->
+          <Pagination
+            :pageSize="searchParams.pageSize"
+            :pageNo="searchParams.pageNo"
+            :total="total"
+            :continues="5"
+            @getPageNo="getPageNo"
+          />
         </div>
       </div>
     </div>
@@ -129,7 +148,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters } from "vuex";
 import SearchSelector from "./SearchSelector/SearchSelector";
 export default {
   name: "Search",
@@ -151,14 +170,14 @@ export default {
         categoryName: "",
         // 关键字
         keyword: "",
-        // 排序
-        order: "",
+        // 排序,初始状态应该是 综合| 降序
+        order: "1:desc",
         // 代表分页器是当前第几页
         pageNo: 1,
         // 每页展示数据的个数
         pageSize: 3,
         //  其他售卖属性的参数
-        props: [""],
+        props: [],
         // 品牌
         trademark: "",
       },
@@ -166,7 +185,6 @@ export default {
   },
   // 组件挂载完毕之前执行一次
   beforeMount() {
-    console.log(this.$route.params, this.$route.query);
     Object.assign(this.searchParams, this.$route.query, this.$route.params);
   },
   mounted() {
@@ -175,13 +193,116 @@ export default {
   },
   computed: {
     // ...mapState("searchAbout", ["searchList"]),
-    ...mapGetters("searchAbout", ["attrsList", "goodsList", "trademarkList"]),
+    // ...mapState("searchAbout", []),
+    ...mapGetters("searchAbout", [
+      "attrsList",
+      "goodsList",
+      "trademarkList",
+      "total",
+    ]),
+    isActive1() {
+      return this.searchParams.order.split(":")[0] == "1";
+    },
+    isAsc() {
+      return this.searchParams.order.split(":")[1] == "asc";
+    },
   },
   methods: {
     // 向服务器发请求获取search模块数据(根据参数不同返回不同的数据进行展示)
     // 将请求封装为函数,需要时调用即可
     getData() {
       this.$store.dispatch("searchAbout/getSearchInfo", this.searchParams);
+    },
+    removeCategoryName() {
+      this.searchParams.categoryName = undefined;
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+      // 路由跳转后,route变化,已经调用getData函数
+      // this.getData();
+      // 地址栏location需要修改,进行路由跳转(现在暂时跳自己)
+      // 只需删除qyery,因此如有params参数,需带上
+      this.$router.push({ name: "search", params: this.$route.params });
+    },
+    removeKeyword() {
+      this.searchParams.keyword = undefined;
+      this.$bus.$emit("clear");
+      this.$router.push({ name: "search", query: this.$route.query });
+    },
+    // 接收品牌参数
+    getTrademark(trademark) {
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+      this.getData();
+    },
+    // 删除品牌面包屑并重发请求
+    removeTrademark() {
+      this.searchParams.trademark = undefined;
+      this.getData();
+    },
+    // 接收售卖属性参数
+    getAttrInfo(args) {
+      let props = `${args[0].attrId}:${args[1]}:${args[0].attrName}`;
+      if (this.searchParams.props.indexOf(props) == -1) {
+        this.searchParams.props.push(props);
+        this.getData();
+      }
+    },
+    // 删除某个售卖属性面包屑
+    removeAttrInfo(index) {
+      this.searchParams.props.splice(index, 1);
+      this.getData();
+    },
+    // 排序操作
+    toggleOrder(flag) {
+      // flag形参,标记用户点击的是综合(1),价格(2)
+      // let originOrder = this.searchParams.order;
+      let tempFlag = this.searchParams.order.split(":")[0];
+      let tempSort = this.searchParams.order.split(":")[1];
+      // 当前的 排列依据 和 排列顺序
+      // if (flag == "1") {
+      //   if (tempFlag == 1) {
+      //     if (tempSort == "asc") {
+      //       this.searchParams.order = "1:desc";
+      //     } else {
+      //       this.searchParams.order = "1:asc";
+      //     }
+      //   } else {
+      //     this.searchParams.order = this.searchParams.order.replace("2", "1");
+      //   }
+      // } else {
+      //   if (tempFlag == 2) {
+      //     if (tempSort == "asc") {
+      //       this.searchParams.order = "2:desc";
+      //     } else {
+      //       this.searchParams.order = "2:asc";
+      //     }
+      //   } else {
+      //     this.searchParams.order = this.searchParams.order.replace("1", "2");
+      //   }
+      // }
+      let newOrder = "";
+      if (flag == tempFlag) {
+        newOrder = `${flag}:${tempSort == "asc" ? "desc" : "asc"}`;
+      } else {
+        newOrder = `${flag}:${tempSort}`;
+      }
+      this.searchParams.order = newOrder;
+      this.getData();
+    },
+    // 接收分页器参数
+    getPageNo(pageNo) {
+      this.searchParams.pageNo = pageNo;
+      this.getData();
+    },
+  },
+  watch: {
+    $route(v1, v2) {
+      Object.assign(this.searchParams, this.$route.query, this.$route.params);
+      this.getData();
+      // 每次请求后,置空相应的分类id
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
     },
   },
 };

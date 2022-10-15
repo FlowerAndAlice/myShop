@@ -73,6 +73,15 @@ export default {
       });
     },
   },
+  mounted() {
+    // 通过全局事件总线触发clear回调
+    this.$bus.$on("clear", () => {
+      this.keyword = "";
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off("clear");
+  },
 };
 </script>
 
