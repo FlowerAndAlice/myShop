@@ -98,7 +98,7 @@
                     <router-link
                       :to="{ name: 'detail', params: { skuid: good.id } }"
                       target="_blank"
-                      ><img :src="good.defaultImg"
+                      ><img v-lazy="good.defaultImg"
                     /></router-link>
                   </div>
                   <div class="price">

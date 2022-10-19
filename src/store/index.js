@@ -4,6 +4,7 @@ Vue.use(Vuex);
 // 引入小仓库
 import homeAbout from "./home"
 import searchAbout from "./search"
+import detailAbout from "./detail"
 
 // 存数据
 const state = {};
@@ -16,6 +17,7 @@ const getters = {};
 export default new Vuex.Store({
     modules: {
         homeAbout,
-        searchAbout
+        searchAbout,
+        detailAbout
     }
 })
