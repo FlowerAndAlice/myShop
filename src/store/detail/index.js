@@ -29,7 +29,7 @@
              return state.itemList.skuInfo || {}
          },
          spuSaleAttrList(state) {
-             return state.itemList.spuSaleAttrList || {}
+             return state.itemList.spuSaleAttrList || []
          }
      },
  }

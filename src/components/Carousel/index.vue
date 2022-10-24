@@ -2,11 +2,7 @@
   <!-- banner轮播 -->
   <div class="swiper-container" id="mySwiper">
     <div class="swiper-wrapper">
-      <div
-        class="swiper-slide"
-        v-for="(carousel, index) in dataList"
-        :key="carousel.id"
-      >
+      <div class="swiper-slide" v-for="carousel in dataList" :key="carousel.id">
         <img :src="carousel.imgUrl" />
       </div>
     </div>
@@ -30,6 +26,7 @@ export default {
       immediate: true,
       handler() {
         this.$nextTick(() => {
+          /* eslint-disable-next-line */
           var mySwiper = new Swiper(".swiper-container", {
             loop: true,
             pagination: {

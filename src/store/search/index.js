@@ -9,7 +9,6 @@ const searchAbout = {
         searchList: {}
     },
     actions: {
-        // params默认值为空对象
         async getSearchInfo({ commit }, params) {
             let result = await reqSearchInfo(params)
             if (result.code == 200) {
