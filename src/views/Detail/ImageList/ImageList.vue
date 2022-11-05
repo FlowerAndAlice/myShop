@@ -1,8 +1,16 @@
 <template>
   <div class="swiper-container">
     <div class="swiper-wrapper">
-      <div class="swiper-slide" v-for="slide in skuImageList" :key="slide.id">
-        <img v-lazy="slide.imgUrl" />
+      <div
+        class="swiper-slide"
+        v-for="(slide, index) in skuImageList"
+        :key="slide.id"
+      >
+        <img
+          v-lazy="slide.imgUrl"
+          @click="activeImg(index)"
+          :class="{ active: currentIndex == index }"
+        />
       </div>
     </div>
     <div class="swiper-button-next"></div>
@@ -17,6 +25,31 @@ export default {
   props: ["skuImageList"],
   name: "ImageList",
   computed: {},
+  methods: {
+    activeImg(index) {
+      this.currentIndex = index;
+      this.$bus.$emit("getImgIndex", index);
+    },
+  },
+  data() {
+    return {
+      currentIndex: 0,
+    };
+  },
+  watch: {
+    skuImageList() {
+      this.$nextTick(() => {
+        new Swiper(".swiper-container", {
+          slidesPerView: 3,
+          slidesPerGroup: 1,
+          navigation: {
+            prevEl: ".swiper-button-prev",
+            nextEl: ".swiper-button-next",
+          },
+        });
+      });
+    },
+  },
 };
 </script>
 
@@ -41,11 +74,6 @@ export default {
       display: block;
 
       &.active {
-        border: 2px solid #f60;
-        padding: 1px;
-      }
-
-      &:hover {
         border: 2px solid #f60;
         padding: 1px;
       }

@@ -89,6 +89,8 @@
                   v-for="attr in spuSaleAttr.spuSaleAttrValueList"
                   :key="attr.id"
                   :class="{ active: attr.isChecked == 1 }"
+                  @click="changeActive(attr, spuSaleAttr.spuSaleAttrValueList)"
+                  style="cursor: pointer"
                 >
                   {{ attr.saleAttrValueName }}
                 </dd>
@@ -354,7 +356,14 @@ export default {
   mounted() {
     this.$store.dispatch("detailAbout/getItemList", this.$route.params.skuid);
   },
-  methods: {},
+  methods: {
+    changeActive(attr, arr) {
+      arr.forEach((item) => {
+        item.isChecked = "0";
+      });
+      attr.isChecked = "1";
+    },
+  },
   computed: {
     ...mapState("detailAbout", ["itemList"]),
     ...mapGetters("detailAbout", [

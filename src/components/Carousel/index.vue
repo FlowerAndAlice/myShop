@@ -27,7 +27,7 @@ export default {
       handler() {
         this.$nextTick(() => {
           /* eslint-disable-next-line */
-          var mySwiper = new Swiper(".swiper-container", {
+          new Swiper(".swiper-container", {
             loop: true,
             pagination: {
               el: ".swiper-pagination",
